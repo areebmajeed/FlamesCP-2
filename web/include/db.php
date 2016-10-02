@@ -12,7 +12,8 @@ try{
         $conn = new PDO("mysql:host=$server;dbname=$database", $username, $password);
 
 }catch(PDOException $e){
-        die("Connection failed: " . $e->getMessage());
+        error_log('Database connection failed: ' . $e->getMessage());
+        die('Connection failed. See error_log for details.');
 }
 
 ?>
