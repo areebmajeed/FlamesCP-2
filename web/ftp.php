@@ -99,31 +99,33 @@ echo '</tr>';
 <br />
 <?php
 if ($_POST['act'] == "create"){
-if (empty($_POST['username']) || empty($_POST['password'])){
-echo '<div class="alert alert-info"><b>Seems like you missed something.</b></div>';
-} else {
+  if (empty($_POST['username']) || empty($_POST['password'])){
+    echo '<div class="alert alert-info"><b>Seems like you missed something.</b></div>';
+  } else if ($_POST['password'] !== $_POST['conf_password']) {
+    echo '<div class="alert alert-info"><b>Password doesn\'t match.</b></div>';
+  } else {
 
-$check = $db->prepare('select * from accounts where username=:account');
-$check->bindParam(':account', $_POST['username']);
-$check->execute();
+    $check = $db->prepare('select * from accounts where username=:account');
+    $check->bindParam(':account', $_POST['username']);
+    $check->execute();
+  
+    if ($check->rowCount() > 0) {
 
-if ($check->rowCount() > 0) {
+      echo '<div class="alert alert-danger"><b>The username has already been taken.<b/></div>';
 
-echo '<div class="alert alert-danger"><b>The username has already been taken.<b/></div>';
+    } else {
 
-} else {
+      $create = $db->prepare('insert into accounts (username, pass) VAlUES (:username, :password);');
+      $create->bindParam(':username', $_POST['username']);
+      $create->bindParam(':password', md5($_POST['password']));
+      $create->execute();
 
-$create = $db->prepare('insert into accounts (username, pass) VAlUES (:username, :password);');
-$create->bindParam(':username', $_POST['username']);
-$create->bindParam(':password', md5($_POST['password']));
-$create->execute();
+      file_put_contents("/var/run/flamescp.sock", "systemcmd--------reloadftp\n", FILE_APPEND | LOCK_EX);
 
-file_put_contents("/var/run/flamescp.sock", "systemcmd--------reloadftp\n", FILE_APPEND | LOCK_EX);
+      echo '<div class="alert alert-success">Account created. Click <a href="ftp.php">here</a> to reload the page.</div>';
 
-echo '<div class="alert alert-success">Account created. Click <a href="ftp.php">here</a> to reload the page.</div>';
-
-}
-}
+    }
+  }
 }
 ?>
 <form action="ftp.php" method="POST">
@@ -131,6 +133,8 @@ echo '<div class="alert alert-success">Account created. Click <a href="ftp.php">
 <input class="form-control" name="username" placeholder="The account's username...">
 <br />
 <input class="form-control" name="password" placeholder="The account's password..." type="password">
+ <br />
+<input class="form-control" name="conf_password" placeholder="Confirm Password..." type="password">
 <br />
 <input class="btn btn-success btn-block" type="submit" value="Create account">
 </form>

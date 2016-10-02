@@ -18,16 +18,16 @@ include 'include/header.php';
 <br />
 <br />
 <?php
-if (!empty($_POST['newpassword'])){
+if (!empty($_POST['newpassword']) && $_POST['newpassword'] === $_POST['conf_newpassword']){
 
-$password = $_POST['newpassword'];
+  $password = $_POST['newpassword'];
 
-$query = $conn->prepare('update login set password=:password where username=:username');
+  $query = $conn->prepare('update login set password=:password where username=:username');
 
-$query->bindParam(':password', password_hash($_POST['newpassword'], PASSWORD_BCRYPT, $bcrypt_opt));
-$query->bindParam(':username', $_SESSION['username']);
+  $query->bindParam(':password', password_hash($_POST['newpassword'], PASSWORD_BCRYPT, $bcrypt_opt));
+  $query->bindParam(':username', $_SESSION['username']);
 
-$query->execute();
+  $query->execute();
 
 ?>
 
@@ -51,6 +51,7 @@ $query->execute();
 <form action="password.php" method="POST" id="passwordform">
 <label>New password</label>
 <input class="form-control" name="newpassword" placeholder="Your new password..." type="password">
+  <input class="form-control" name="conf_newpassword" placeholder="Confirm password..." type="password">
 <br />
 <br />
 <input class="btn btn-success btn-block" value="Change password" type="submit">

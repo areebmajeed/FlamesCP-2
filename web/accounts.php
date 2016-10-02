@@ -94,29 +94,31 @@ echo '</tr>';
 <br />
 <?php
 if ($_POST['act'] == "create"){
-if (empty($_POST['username']) || empty($_POST['password'])){
-echo '<div class="alert alert-info"><b>Seems like you missed something.</b></div>';
-} else {
+  if (empty($_POST['username']) || empty($_POST['password'])){
+    echo '<div class="alert alert-info"><b>Seems like you missed something.</b></div>';
+  } else if($_POST['password'] !== $_POST['conf_password']) {
+    echo '<div class="alert alert-info"><b>Password doesn\'t match.</b></div>';
+  } else {
 
-$check = $conn->prepare('select * from login where username=:account');
-$check->bindParam(':account', $_POST['username']);
-$check->execute();
-
-if ($check->rowCount() > 0) {
-
-echo '<div class="alert alert-danger"><b>The username has already been taken.<b/></div>';
-
-} else {
-
-$create = $conn->prepare('insert into login (username, password, status) VAlUES (:username, :password, "admin");');
-$create->bindParam(':username', $_POST['username']);
-$create->bindParam(':password', password_hash($_POST['password'], PASSWORD_BCRYPT, $bcrypt_opt));
-$create->execute();
-
-echo '<div class="alert alert-success">Account created. Click <a href="accounts.php">here</a> to reload the page.</div>';
-
-}
-}
+    $check = $conn->prepare('select * from login where username=:account');
+    $check->bindParam(':account', $_POST['username']);
+    $check->execute();
+  
+    if ($check->rowCount() > 0) {
+  
+      echo '<div class="alert alert-danger"><b>The username has already been taken.<b/></div>';
+  
+    } else {
+  
+      $create = $conn->prepare('insert into login (username, password, status) VAlUES (:username, :password, "admin");');
+      $create->bindParam(':username', $_POST['username']);
+      $create->bindParam(':password', password_hash($_POST['password'], PASSWORD_BCRYPT, $bcrypt_opt));
+      $create->execute();
+  
+      echo '<div class="alert alert-success">Account created. Click <a href="accounts.php">here</a> to reload the page.</div>';
+  
+    }
+  }
 }
 ?>
 <form action="accounts.php" method="POST">
@@ -124,6 +126,8 @@ echo '<div class="alert alert-success">Account created. Click <a href="accounts.
 <input class="form-control" name="username" placeholder="The account's username...">
 <br />
 <input class="form-control" name="password" placeholder="The account's password..." type="password">
+<br />
+<input class="form-control" name="conf_password" placeholder="Confirm Password..." type="password">
 <br />
 <input class="btn btn-success btn-block" type="submit" value="Create account">
 </form>
