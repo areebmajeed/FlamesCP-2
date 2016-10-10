@@ -11,9 +11,13 @@ This panel is licensed under the GNU GPLv3 license which can be found here: http
 This control panel uses: 
 - PHP 5.5+ 
 - CentOS 5.x/6.x 64 bit
-- Apache (other webservers not currently supported - add support if you want) 
+- Apache or nginx(experimental) 
 - PHP GD module 
 - MySQL PDO
+
+Experimental support:
+- nginx
+
 
 ##Installation
 Installing FlamesCP 2 is pretty simple - all you have to do is execute the following as the root user:
@@ -22,6 +26,13 @@ Installing FlamesCP 2 is pretty simple - all you have to do is execute the follo
     wget https://raw.githubusercontent.com/FlamesRunner/FlamesCP-2/master/installer.sh
     chmod 755 installer.sh
     ./installer.sh
+
+To test out nginx 
+
+    cd ~
+    wget https://raw.githubusercontent.com/FlamesRunner/FlamesCP-2/master/installer-nginx
+    chmod 755 installer-nginx
+    ./installer-nginx
 
 ## Support
 
