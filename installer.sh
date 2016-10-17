@@ -1,12 +1,23 @@
 #!/bin/bash
 
+os_version_check() {
+	#Version Checking
+	OS_VER=$(cat /etc/centos-release | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+	CENTOS_VERSION=( ${OS_VER//./ } )
+	MAJOR_VERSION=${CENTOS_VERSION[0]}
+	MINOR_VERSION=${CENTOS_VERSION[1]}
+	ARCH=$(getconf LONG_BIT)
+}
+os_version_check
 if [ "$1" = "--force" ]; then
 echo "Danger: You have bypassed pre-installation checks."
-else
+fi
 if [ ! -f /etc/centos-release ]; then
 echo "You must be running CentOS 6. If you are, skip this warning by adding the --force argument."
 exit 0
-fi
+else if [ ${MAJOR_VERSION} != "6" ]; then
+echo "You must be running CentOS 6. If you are, skip this warning by adding the --force argument."
+exit 0
 fi
 
 echo "     _______   _______   _______"
